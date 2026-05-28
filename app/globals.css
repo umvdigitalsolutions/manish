@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root{
-  --navy: #0B1F3A;
-  --gold: #C9A227;
+  --navy: #102040;
+  --gold: #c09040;
   --offwhite: #F8FAFC;
 }
 
@@ -20,7 +20,7 @@ body{
 /* subtle card */
 .card { background: white; border: 1px solid rgba(11,31,58,0.06); border-radius: 0.75rem; box-shadow: 0 6px 20px rgba(11,31,58,0.04); }
 
-.btn-primary{ background: linear-gradient(90deg,var(--navy),#0f2a52); color:white; }
+.btn-primary{ background: linear-gradient(90deg,var(--navy),#c09040); color:white; }
 .btn-ghost{ border:1px solid rgba(11,31,58,0.06); background:transparent }
 
 /* Decorative shapes */
@@ -31,7 +31,7 @@ body{
 
 /* Global variables */
 :root {
-  --brand: #0f172a; /* slate-900 */
+  --brand: #102040;
   --muted: #64748b; /* slate-500 */
 }
 
@@ -82,4 +82,3 @@ body {
 }
 
 .animate-slow { animation: floaty 8s ease-in-out infinite; }
-

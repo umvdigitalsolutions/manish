@@ -16,9 +16,9 @@ export default function HeroBlock(){
         <div>
           <div className="card p-8 relative overflow-hidden">
             <div className="absolute -left-8 -top-6 h-36 w-36 rounded-full bg-gradient-to-tr from-indigo-200 to-rose-200 opacity-40" />
-            <div className="absolute right-6 top-8 h-24 w-24 rounded-lg bg-[var(--gold)]/10" />
+            <div className="absolute right-6 top-8 h-24 w-24 rounded-xl bg-[var(--gold)]/10" />
             <div className="relative">
-                <div className="h-56 w-full rounded-lg overflow-hidden border border-white/30">
+                <div className="h-56 w-full rounded-xl overflow-hidden border border-white/30">
                   <img src="/abs.jpg" alt="Abstract finance illustration" className="w-full h-full object-cover" />
                 </div>
               </div>

@@ -15,7 +15,7 @@ export default function Industries() {
   return (
     <div className="pt-auto rounded-2xl bg-slate-200  p-8 ">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold text-slate-900">Industries Served</h2>
+        <h2 className="text-2xl font-semibold text-[#102040]">Industries Served</h2>
         <p className="mt-2 text-sm text-slate-700">We provide tailored cost accounting and compliance solutions across industries.</p>
       </div>
 
@@ -26,9 +26,9 @@ export default function Industries() {
             className="relative overflow-hidden rounded-2xl border p-5 bg-white"
           >
             <div className="flex items-start gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-indigo-50 text-xl">{it.icon}</div>
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-xl">{it.icon}</div>
               <div>
-                <div className="font-semibold text-slate-900">{it.title}</div>
+                <div className="font-semibold text-[#102040]">{it.title}</div>
                 <div className="mt-2 text-sm text-slate-600">{it.desc}</div>
               </div>
             </div>
