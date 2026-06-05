@@ -1,5 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { buildMetadata } from "../seo";
+
+export const metadata = buildMetadata({
+  title: "About",
+  description:
+    "Learn about MM & Co., a cost accounting and compliance advisory firm established in 2015 for cost audit, GST, taxation, accounting, and management reporting.",
+  path: "/about",
+  keywords: ["about MM & Co.", "cost accounting firm", "compliance advisory firm"],
+});
 
 const highlights = [
   { value: "2015", label: "Established" },

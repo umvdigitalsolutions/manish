@@ -1,4 +1,13 @@
 import Link from "next/link";
+import { buildMetadata } from "../seo";
+
+export const metadata = buildMetadata({
+  title: "Locations",
+  description:
+    "Find MM & Co. office locations and contact details for Noida, Delhi, Guwahati, and Sonipat tax, GST, audit, and compliance support.",
+  path: "/locations",
+  keywords: ["cost accountant Noida address", "GST consultant Noida office", "MM & Co locations"],
+});
 
 const offices = [
   {

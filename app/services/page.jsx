@@ -1,5 +1,14 @@
 import Link from "next/link";
 import ServicesExplorer from "../components/Services";
+import { buildMetadata } from "../seo";
+
+export const metadata = buildMetadata({
+  title: "Services",
+  description:
+    "Explore MM & Co. services including cost audit, GST compliance, tax audit, TDS, internal audit, MCA ROC compliance, bookkeeping, and management consultancy.",
+  path: "/services",
+  keywords: ["cost audit services", "GST compliance services", "tax audit", "ROC compliance"],
+});
 
 const stats = [
   { value: "9+", label: "Service areas" },

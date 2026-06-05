@@ -1,3 +1,12 @@
+import { buildMetadata } from "../seo";
+
+export const metadata = buildMetadata({
+  title: "Test",
+  description: "Internal test page.",
+  path: "/test",
+  noIndex: true,
+});
+
 export default function TestPage() {
   return (
     <div className="container py-20">

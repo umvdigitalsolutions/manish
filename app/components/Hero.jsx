@@ -19,7 +19,7 @@ export default function Hero() {
       <div className="absolute inset-y-0 right-0 hidden w-1/3 bg-slate-50 lg:block" />
       <div className="absolute left-0 top-0 h-full w-2 bg-[#d8bc80]" />
 
-      <div className="container relative grid min-h-[calc(100svh-8rem)] items-center gap-12 py-16 lg:grid-cols-[1.05fr_0.95fr] lg:py-24">
+      <div className="container relative grid min-h-[calc(100svh-10rem)] items-center gap-10 py-12 lg:grid-cols-[1.05fr_0.95fr] lg:py-16">
         <div className="max-w-3xl">
           <p className="inline-flex rounded-xl border border-[#d8bc80] bg-[#fbf5e8] px-3 py-2 text-sm font-bold text-[#102040]">
             Senior-led finance, audit and compliance advisory

@@ -1,5 +1,14 @@
 import Image from "next/image";
 import Link from "next/link";
+import { buildMetadata } from "../seo";
+
+export const metadata = buildMetadata({
+  title: "Team",
+  description:
+    "Meet the MM & Co. leadership team for cost audit, GST, tax, internal audit, corporate compliance, and management reporting engagements.",
+  path: "/team",
+  keywords: ["MM & Co team", "cost accountant partners", "audit tax GST team"],
+});
 
 const partners = [
   {
