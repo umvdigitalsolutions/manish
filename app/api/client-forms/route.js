@@ -3,7 +3,7 @@ const RESEND_ENDPOINT = "https://api.resend.com/emails";
 const formTypes = {
   incomeTax: {
     label: "Income Tax Details",
-    filename: "income-tax-details.html",
+    filename: "income-tax-details.pdf",
     fields: [
       ["fullName", "Full name"],
       ["pan", "PAN"],
@@ -25,7 +25,7 @@ const formTypes = {
   },
   gst: {
     label: "GST Details",
-    filename: "gst-details.html",
+    filename: "gst-details.pdf",
     fields: [
       ["businessName", "Business / trade name"],
       ["gstin", "GSTIN"],
@@ -111,6 +111,167 @@ function buildDocumentHtml(form, rows) {
   `;
 }
 
+function sanitizePdfText(value) {
+  return String(value ?? "")
+    .replace(/[^\x09\x0A\x0D\x20-\x7E]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapePdfText(value) {
+  return sanitizePdfText(value)
+    .replaceAll("\\", "\\\\")
+    .replaceAll("(", "\\(")
+    .replaceAll(")", "\\)");
+}
+
+function wrapPdfText(value, maxLength = 74) {
+  const words = sanitizePdfText(value).split(" ").filter(Boolean);
+  const lines = [];
+  let line = "";
+
+  for (const word of words) {
+    if (!line) {
+      line = word;
+    } else if (`${line} ${word}`.length <= maxLength) {
+      line = `${line} ${word}`;
+    } else {
+      lines.push(line);
+      line = word;
+    }
+  }
+
+  if (line) {
+    lines.push(line);
+  }
+
+  return lines.length ? lines : ["-"];
+}
+
+function drawText({ text, x, y, size = 10, font = "F1" }) {
+  return `BT /${font} ${size} Tf ${x} ${y} Td (${escapePdfText(text)}) Tj ET`;
+}
+
+function buildPdfContent(form, rows) {
+  const pages = [];
+  let commands = [];
+  let y = 790;
+
+  function startPage() {
+    commands = [
+      drawText({ text: "MM & Co.", x: 50, y: 790, size: 12, font: "F2" }),
+      drawText({ text: form.label, x: 50, y: 765, size: 20, font: "F2" }),
+      drawText({
+        text: "Client information sheet",
+        x: 50,
+        y: 744,
+        size: 10,
+      }),
+    ];
+    y = 712;
+  }
+
+  function finishPage() {
+    pages.push(commands.join("\n"));
+  }
+
+  function ensureSpace(lineCount) {
+    if (y - lineCount * 16 < 70) {
+      finishPage();
+      startPage();
+    }
+  }
+
+  startPage();
+
+  for (const [label, value] of rows) {
+    const valueLines = wrapPdfText(value);
+    const lineCount = Math.max(1, valueLines.length);
+    ensureSpace(lineCount + 1);
+
+    commands.push(drawText({ text: label, x: 50, y, size: 10, font: "F2" }));
+    valueLines.forEach((line, index) => {
+      commands.push(
+        drawText({
+          text: line,
+          x: 205,
+          y: y - index * 14,
+          size: 10,
+        })
+      );
+    });
+    y -= lineCount * 14 + 10;
+  }
+
+  ensureSpace(7);
+  y -= 16;
+  commands.push(drawText({ text: "Client signature", x: 50, y, font: "F2" }));
+  commands.push(drawText({ text: "Office use", x: 325, y, font: "F2" }));
+  y -= 46;
+  commands.push("50 " + y + " m 250 " + y + " l S");
+  commands.push("325 " + y + " m 545 " + y + " l S");
+  y -= 16;
+  commands.push(drawText({ text: "Signature / confirmation", x: 50, y }));
+  commands.push(drawText({ text: "Reviewed by / date", x: 325, y }));
+
+  ensureSpace(4);
+  y -= 38;
+  wrapPdfText(
+    "This form is intended for information collection and preliminary review. Final tax, GST, or filing treatment should be confirmed against supporting documents and applicable law.",
+    92
+  ).forEach((line) => {
+    commands.push(drawText({ text: line, x: 50, y, size: 8 }));
+    y -= 11;
+  });
+
+  finishPage();
+  return pages;
+}
+
+function buildPdf(form, rows) {
+  const pageContents = buildPdfContent(form, rows);
+  const objects = [
+    "<< /Type /Catalog /Pages 2 0 R >>",
+    "",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
+  ];
+  const pageObjectNumbers = [];
+
+  for (const content of pageContents) {
+    const contentObjectNumber = objects.length + 1;
+    const pageObjectNumber = objects.length + 2;
+    const stream = `${content}\n`;
+
+    objects.push(
+      `<< /Length ${Buffer.byteLength(stream, "latin1")} >>\nstream\n${stream}endstream`,
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents ${contentObjectNumber} 0 R >>`
+    );
+    pageObjectNumbers.push(pageObjectNumber);
+  }
+
+  objects[1] = `<< /Type /Pages /Kids [${pageObjectNumbers
+    .map((pageObjectNumber) => `${pageObjectNumber} 0 R`)
+    .join(" ")}] /Count ${pageObjectNumbers.length} >>`;
+
+  let pdf = "%PDF-1.4\n";
+  const offsets = [0];
+
+  objects.forEach((object, index) => {
+    offsets.push(Buffer.byteLength(pdf, "latin1"));
+    pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+  });
+
+  const xrefOffset = Buffer.byteLength(pdf, "latin1");
+  pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+  offsets.slice(1).forEach((offset) => {
+    pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+  });
+  pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+  return Buffer.from(pdf, "latin1");
+}
+
 export async function POST(request) {
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL || "infobramandcollp@gmail.com";
@@ -138,6 +299,7 @@ export async function POST(request) {
 
   const rows = getRows(form, data.values);
   const documentHtml = buildDocumentHtml(form, rows);
+  const pdfBuffer = buildPdf(form, rows);
   const email = String(data.values?.email || "").trim();
   const subjectName =
     String(data.values?.fullName || data.values?.businessName || "").trim() ||
@@ -159,7 +321,8 @@ export async function POST(request) {
       attachments: [
         {
           filename: form.filename,
-          content: Buffer.from(documentHtml).toString("base64"),
+          content: pdfBuffer.toString("base64"),
+          content_type: "application/pdf",
         },
       ],
     }),
