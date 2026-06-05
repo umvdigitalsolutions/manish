@@ -5,6 +5,12 @@ import { useState } from "react";
 
 const contactMethods = [
   {
+    label: "WhatsApp",
+    value: "+91 9999289826",
+    href: "https://wa.me/919999289826?text=Hello%20MM%20%26%20Co.%2C%20I%20would%20like%20to%20discuss%20a%20website%20enquiry.",
+    featured: true,
+  },
+  {
     label: "Email",
     value: "mmcocma@gmail.com",
     href: "mailto:mmcocma@gmail.com",
@@ -28,6 +34,48 @@ const matterTypes = [
   "Accounting and MIS support",
 ];
 
+const whatsappNumber = "919999289826";
+
+function WhatsappIcon({ className = "h-5 w-5" }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className}
+      fill="currentColor"
+      viewBox="0 0 24 24"
+    >
+      <path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.33 4.95L2 22l5.27-1.39a9.85 9.85 0 0 0 4.73 1.2h.01c5.46 0 9.91-4.45 9.91-9.91A9.83 9.83 0 0 0 12.04 2Zm0 18.14h-.01a8.2 8.2 0 0 1-4.18-1.14l-.3-.18-3.13.82.84-3.05-.2-.31a8.17 8.17 0 0 1-1.25-4.37c0-4.54 3.69-8.23 8.24-8.23a8.2 8.2 0 0 1 8.23 8.24c0 4.53-3.7 8.22-8.24 8.22Zm4.51-6.16c-.25-.12-1.46-.72-1.69-.8-.23-.08-.39-.12-.56.12-.16.25-.64.8-.79.97-.14.16-.29.18-.54.06-.25-.12-1.04-.38-1.98-1.22-.73-.65-1.23-1.46-1.37-1.71-.14-.25-.02-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.16.04-.31-.02-.43-.06-.12-.56-1.35-.77-1.85-.2-.49-.41-.42-.56-.43h-.48c-.16 0-.43.06-.66.31-.23.25-.87.85-.87 2.07s.89 2.4 1.01 2.57c.12.16 1.75 2.67 4.24 3.74.59.26 1.06.41 1.42.52.6.19 1.14.16 1.57.1.48-.07 1.46-.6 1.67-1.17.2-.58.2-1.07.14-1.17-.06-.1-.23-.16-.48-.29Z" />
+    </svg>
+  );
+}
+
+function buildWhatsappMessage(form) {
+  if (!form.name && !form.email && !form.phone && !form.company && !form.service && !form.message) {
+    return "Hello MM & Co., I would like to discuss an enquiry from your website.";
+  }
+
+  const details = [
+    ["Name", form.name],
+    ["Email", form.email],
+    ["Phone", form.phone || "Not provided"],
+    ["Company", form.company || "Not provided"],
+    ["Service area", form.service || "Not selected"],
+  ];
+
+  const detailText = details
+    .map(([label, value]) => `*${label}:* ${value}`)
+    .join("\n");
+
+  return [
+    "*New enquiry from MM & Co. website*",
+    "",
+    detailText,
+    "",
+    "*Message:*",
+    form.message,
+  ].join("\n");
+}
+
 export default function Contact() {
   const [form, setForm] = useState({
     name: "",
@@ -44,13 +92,21 @@ export default function Contact() {
     setForm({ ...form, [event.target.name]: event.target.value });
   }
 
-  async function handleSubmit(event) {
-    event.preventDefault();
+  function validateForm() {
     if (!form.name || !form.email || !form.message) {
       setStatus({
         ok: false,
         msg: "Please add your name, email, and a short message.",
       });
+      return false;
+    }
+
+    return true;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (!validateForm()) {
       return;
     }
 
@@ -95,6 +151,22 @@ export default function Contact() {
     } finally {
       setIsSubmitting(false);
     }
+  }
+
+  function handleWhatsappClick() {
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
+      buildWhatsappMessage(form)
+    )}`;
+    const opened = window.open(whatsappUrl, "_blank", "noopener,noreferrer");
+
+    if (!opened) {
+      window.location.href = whatsappUrl;
+    }
+
+    setStatus({
+      ok: true,
+      msg: "Your WhatsApp message is ready. Please review it and tap send in WhatsApp.",
+    });
   }
 
   return (
@@ -152,12 +224,29 @@ export default function Contact() {
                 <a
                   key={method.label}
                   href={method.href}
-                  className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm transition hover:border-[#d8bc80] hover:shadow-md"
+                  target={method.featured ? "_blank" : undefined}
+                  rel={method.featured ? "noreferrer" : undefined}
+                  className={`rounded-xl border p-5 shadow-sm transition hover:shadow-md ${
+                    method.featured
+                      ? "border-[#d8bc80] bg-[#102040] text-white hover:bg-[#244b7a]"
+                      : "border-slate-200 bg-white hover:border-[#d8bc80]"
+                  }`}
                 >
-                  <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
+                  <div
+                    className={`text-xs font-bold uppercase tracking-[0.14em] ${
+                      method.featured ? "text-[#fbf5e8]" : "text-slate-500"
+                    }`}
+                  >
                     {method.label}
                   </div>
-                  <div className="mt-2 text-lg font-bold text-[#102040]">
+                  <div
+                    className={`mt-2 flex items-center gap-3 text-lg font-bold ${
+                      method.featured ? "text-white" : "text-[#102040]"
+                    }`}
+                  >
+                    {method.featured ? (
+                      <WhatsappIcon className="h-6 w-6 text-[#d8bc80]" />
+                    ) : null}
                     {method.value}
                   </div>
                 </a>
@@ -286,7 +375,7 @@ export default function Contact() {
               />
             </label>
 
-            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="mt-6 flex flex-col gap-3 border-b border-slate-200 pb-6 sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -300,6 +389,26 @@ export default function Contact() {
               >
                 View office locations
               </Link>
+            </div>
+
+            <div className="mt-6 rounded-xl border border-[#d8bc80] bg-[#fbf5e8] p-5">
+              <p className="text-xs font-bold uppercase tracking-[0.14em] text-[#244b7a]">
+                Prefer WhatsApp?
+              </p>
+              <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-sm leading-6 text-slate-700">
+                  Open WhatsApp directly with a ready message for MM &amp; Co.
+                  You can edit it before sending.
+                </p>
+                <button
+                  type="button"
+                  onClick={handleWhatsappClick}
+                  className="inline-flex shrink-0 items-center justify-center rounded-xl bg-[#102040] px-6 py-3 text-sm font-bold text-white transition hover:bg-[#244b7a]"
+                >
+                  <WhatsappIcon className="mr-2 h-5 w-5 text-[#d8bc80]" />
+                  Send on WhatsApp
+                </button>
+              </div>
             </div>
           </form>
         </div>
