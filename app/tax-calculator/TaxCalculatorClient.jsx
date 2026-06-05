@@ -352,6 +352,7 @@ export default function TaxCalculator() {
   const [hraReceived, setHraReceived] = useState("240000");
   const [rentPaid, setRentPaid] = useState("300000");
   const [isMetro, setIsMetro] = useState(true);
+  const [advanceTaxEstimate, setAdvanceTaxEstimate] = useState("100000");
   const [advanceTaxPaid, setAdvanceTaxPaid] = useState("0");
   const [tdsAmount, setTdsAmount] = useState("100000");
   const [tdsRate, setTdsRate] = useState("10");
@@ -409,6 +410,7 @@ export default function TaxCalculator() {
   const savings = Math.abs(results.newResult.totalTax - results.oldResult.totalTax);
   const estimatedTax =
     lowerRegime === "new" ? results.newResult.totalTax : results.oldResult.totalTax;
+  const plannedAdvanceTax = toNumber(advanceTaxEstimate) || estimatedTax;
   const paidAdvanceTax = toNumber(advanceTaxPaid);
   const gstResult = useMemo(
     () => calculateGst({ amount: gstAmount, rate: gstRate, mode: gstMode }),
@@ -860,9 +862,26 @@ export default function TaxCalculator() {
                   Advance tax planner
                 </p>
                 <p className="mt-3 text-sm leading-6 text-slate-700">
-                  Uses the lower regime estimate above and shows cumulative
+                  Enter expected annual tax payable and see cumulative
                   installment targets.
                 </p>
+                <label className="mt-5 block">
+                  <span className="text-sm font-bold text-slate-700">
+                    Estimated yearly tax payable
+                  </span>
+                  <input
+                    type="number"
+                    min="0"
+                    value={advanceTaxEstimate}
+                    onChange={(event) =>
+                      setAdvanceTaxEstimate(event.target.value)
+                    }
+                    className="mt-2 w-full rounded-xl border border-slate-300 px-4 py-3 text-sm outline-none focus:border-[#244b7a] focus:ring-2 focus:ring-[#f7ecd5]"
+                  />
+                  <span className="mt-2 block text-xs leading-5 text-slate-500">
+                    Income-tax estimate above: {formatInr.format(estimatedTax)}
+                  </span>
+                </label>
                 <label className="mt-5 block">
                   <span className="text-sm font-bold text-slate-700">
                     Advance tax already paid
@@ -877,7 +896,7 @@ export default function TaxCalculator() {
                 </label>
                 <div className="mt-5 grid gap-3 border-t border-slate-200 pt-4 text-sm">
                   {advanceTaxSchedule.map((item) => {
-                    const target = Math.round(estimatedTax * item.percent);
+                    const target = Math.round(plannedAdvanceTax * item.percent);
                     const payable = Math.max(0, target - paidAdvanceTax);
 
                     return (
