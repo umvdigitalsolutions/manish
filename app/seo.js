@@ -81,7 +81,7 @@ export const organizationSchema = {
   description: defaultDescription,
   foundingDate: "2015-04-01",
   email: "mmcocma@gmail.com",
-  telephone: "+91-7290821910",
+  telephone: "+91-9718324334",
   address: {
     "@type": "PostalAddress",
     streetAddress: "B-33, 1st Floor, Sector 63",

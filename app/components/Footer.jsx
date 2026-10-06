@@ -14,8 +14,8 @@ export default function Footer() {
             <address className="mt-4 not-italic leading-7">
               B-33, 1st Floor, Sector 63, Noida 201301
               <br />
-              <a href="tel:+917290821910" className="hover:text-[#d8bc80]">
-                +91 7290821910
+              <a href="tel:+919718324334" className="hover:text-[#d8bc80]">
+                +91 97183 24334
               </a>
               <br />
               <a href="mailto:mmcocma@gmail.com" className="hover:text-[#d8bc80]">

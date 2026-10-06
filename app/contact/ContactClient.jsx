@@ -6,8 +6,8 @@ import { useState } from "react";
 const contactMethods = [
   {
     label: "WhatsApp",
-    value: "+91 9999289826",
-    href: "https://wa.me/919999289826?text=Hello%20MM%20%26%20Co.%2C%20I%20would%20like%20to%20discuss%20a%20website%20enquiry.",
+    value: "+91 97183 24334",
+    href: "https://wa.me/919718324334?text=Hello%20MM%20%26%20Co.%2C%20I%20would%20like%20to%20discuss%20a%20website%20enquiry.",
     featured: true,
   },
   {
@@ -17,13 +17,13 @@ const contactMethods = [
   },
   {
     label: "Phone",
-    value: "+91 7290821910",
-    href: "tel:+917290821910",
+    value: "+91 97183 24334",
+    href: "tel:+919718324334",
   },
   {
     label: "Alternate phone",
-    value: "+91 9999289826",
-    href: "tel:+919999289826",
+    value: "+91 97183 24334",
+    href: "tel:+919718324334",
   },
 ];
 
@@ -34,7 +34,7 @@ const matterTypes = [
   "Accounting and MIS support",
 ];
 
-const whatsappNumber = "919999289826";
+const whatsappNumber = "919718324334";
 
 function WhatsappIcon({ className = "h-5 w-5" }) {
   return (

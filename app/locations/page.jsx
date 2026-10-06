@@ -14,7 +14,7 @@ const offices = [
     type: "Head Office",
     city: "Noida",
     address: "B-33, 1st Floor, Sector 63, Noida 201301",
-    phone: "+91 7290821910",
+    phone: "+91 97183 24334",
     email: "mmcocma@gmail.com",
     note: "Primary coordination office for appointments, document drop-off, and engagement planning.",
   },
@@ -92,8 +92,8 @@ export default function Locations() {
               B-33, 1st Floor, Sector 63, Noida 201301
             </p>
             <div className="mt-6 grid gap-3 text-sm font-semibold text-white">
-              <a href="tel:+917290821910" className="transition hover:text-[#d8bc80]">
-                +91 7290821910
+              <a href="tel:+919718324334" className="transition hover:text-[#d8bc80]">
+                +91 97183 24334
               </a>
               <a href="mailto:mmcocma@gmail.com" className="transition hover:text-[#d8bc80]">
                 mmcocma@gmail.com
@@ -148,7 +148,7 @@ export default function Locations() {
                   <div className="mt-6 flex flex-col gap-2 border-t border-slate-200 pt-5 text-sm font-bold sm:flex-row sm:gap-5">
                     {office.phone ? (
                       <a
-                        href="tel:+917290821910"
+                        href="tel:+919718324334"
                         className="text-[#244b7a] transition hover:text-[#102040]"
                       >
                         {office.phone}
